@@ -10,7 +10,7 @@ import re
 #Other settable vars follow below:
 tempThreshold = 60 #in Celsius
 pollingTime = 10 #in seconds
-
+verbose = True #display temperature every pollingTime seconds
 def fanOn() :
 	os.system("sudo uhubctl -a 1 -p2 -l1-1 >/dev/null 2>&1")
 
@@ -29,7 +29,8 @@ isFanOn = True
 while(1):
 	temperature = os.popen("sudo cat /sys/class/thermal/thermal_zone0/temp").read();
 	temp_decimal = int(temperature) / 1000
-	print("Current temperature: " + str(temp_decimal) + "°C")
+	if verbose == True
+		print("Current temperature: " + str(temp_decimal) + "°C")
 	if (temp_decimal) >= tempThreshold:
 		fanOn()
 		isFanOn == True
