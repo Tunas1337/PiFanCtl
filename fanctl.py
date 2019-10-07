@@ -1,35 +1,73 @@
+#USB Fan Controller v1.0 - Tunas1337
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import os
 import time
 import re
+import sys
 
-#USB Fan Controller v1.0 - Tunas1337
-#Change the -p parameter in fanOn() and fanOff() to reflect the port your fan is plugged into!
-#Other settable vars follow below:
+helpArr = ["h", "help", "-h"]
+
+def displayHelp():
+    print("")
+    print("fanctl <port> <tempTreshold> <pollingtime>")
+    print("port - which usb port to use (default: 2)")  
+    print("tempThreshold - in celsius, the limit to turn the fan on or off (default: 3)")
+    print("pollingTime - in seconds, how many times to check & update the fan (default: 10)")
+    print("")
+    
+def fanOn() :
+	os.system("sudo uhubctl -a 1 -p%s -l1-1 >/dev/null 2>&1" % port)
+
+def fanOff() :
+	os.system("sudo uhubctl -a 0 -p%s -l1-1 >/dev/null 2>&1" % port)
+
+#Defaults for vars follow below:
 tempThreshold = 60 #in Celsius
 pollingTime = 10 #in seconds
 verbose = True #display temperature every pollingTime seconds
-def fanOn() :
-	os.system("sudo uhubctl -a 1 -p2 -l1-1 >/dev/null 2>&1")
+port = 2
 
-def fanOff() :
-	os.system("sudo uhubctl -a 0 -p2 -l1-1 >/dev/null 2>&1")
-
-#original code to test fan on/off
-'''print("Testing subsystem...")
-os.system("sudo uhubctl -a 0 -p2 -l1-1")
-time.sleep(3)
-os.system("sudo uhubctl -a 1 -p2 -l1-1")
-print("Test successful.")'''
-
-print("Starting program...")
+#Support for commandline arguments to change vars
+if len(sys.argv) == 2:
+    if sys.argv[1].lower() in helpArr:
+        displayHelp()
+        sys.exit()
+    else:
+        #only the port specfied
+        try:
+            port = int(sys.argv[1])
+        except ValueError:
+            print("Specified values need to be valid integers")
+            displayHelp()
+            sys.exit()
+elif len(sys.argv) == 3:
+    # port and tempThreshold specfied
+    try:
+        port = int(sys.argv[1])
+        tempThreshold = int(sys.argv[2])
+    except ValueError:
+        print("Specfied values need to be valid integers")
+        displayHelp()
+        sys.exit()
+elif len(sys.argv) == 4:
+    # port, tempThreshold and pollingTime specfied
+    try:
+        port = int(sys.argv[1])
+        tempThreshold = int(sys.argv[2])
+        pollingTime = int(sys.argv[3])
+    except ValueError:
+        print("Specfied values need to be valid integers")
+        displayHelp()
+        sys.excit()
+    
+print("Starting program... port: %s, tempThreshold: %s, pollingTime: %s" %(port, tempThreshold, pollingTime))
 isFanOn = True
 while(1):
 	temperature = os.popen("sudo cat /sys/class/thermal/thermal_zone0/temp").read();
 	temp_decimal = int(temperature) / 1000
-	if verbose == True
+	if verbose == True:
 		print("Current temperature: " + str(temp_decimal) + "°C")
 	if (temp_decimal) >= tempThreshold:
 		fanOn()
