@@ -13,7 +13,7 @@ def displayHelp():
     print("")
     print("fanctl <port> <tempTreshold> <pollingtime>")
     print("port - which usb port to use (default: 2)")  
-    print("tempThreshold - in celsius, the limit to turn the fan on or off (default: 3)")
+    print("tempThreshold - in celsius, the limit to turn the fan on or off (default: 60)")
     print("pollingTime - in seconds, how many times to check & update the fan (default: 10)")
     print("")
     
